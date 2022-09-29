@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "543307976779",
+    "project_id": "flutter-incoming-call-5098e",
+    "storage_bucket": "flutter-incoming-call-5098e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:543307976779:android:5ef2164067eb63a64d3dce",
+        "android_client_info": {
+          "package_name": "com.app.incomingcall"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "543307976779-na5tkpnk8cag3nph1tuhenvjitqji9eo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwMiyuHTLKVd29NTYph5nOpUrwNEBAk3A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "543307976779-na5tkpnk8cag3nph1tuhenvjitqji9eo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
