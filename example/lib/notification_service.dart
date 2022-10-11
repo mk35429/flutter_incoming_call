@@ -56,7 +56,7 @@ class NotificationService{
         // TODO: show screen calling in Flutter
           break;
         case CallEvent.ACTION_CALL_ACCEPT:
-          print("ACTION_CALL_ACCEPT");
+          print("ACTION_CALL_ACCEPT${event.toString()}");
           Get.toNamed(Routes.ongoingScreen);
           // Navigator.of(navigationKey.currentContext!).push(MaterialPageRoute(builder: (context) => OnGoingScreen()));
         // TODO: accepted an incoming call
@@ -99,7 +99,7 @@ class NotificationService{
   Future<void> getDevicePushTokenVoIP() async {
     var devicePushTokenVoIP =
     await FlutterIncomingCall.getDevicePushTokenVoIP();
-    print(devicePushTokenVoIP);
+    print("PushTokenVoIP : $devicePushTokenVoIP");
   }
 
   Future<Map<String, dynamic>?> getPushNotificationRoute() async{
@@ -137,7 +137,7 @@ class NotificationService{
     var params = <String, dynamic>{
       'id': uuid,
       'nameCaller': 'Hien Nguyen',
-      'appName': 'Callkit',
+      'appName': 'Flutter Video Call',
       'avatar': 'https://i.pravatar.cc/100',
       'handle': '0123456789',
       'type': 0,

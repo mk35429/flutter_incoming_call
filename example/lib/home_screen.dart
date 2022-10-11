@@ -13,7 +13,9 @@ class HomeScreen extends StatelessWidget{
     return Scaffold(
       body: Center(
         child: TextButton(onPressed: () {
-          NotificationService().showCallkitIncoming(const Uuid().v4());
+          var uuid = const Uuid().v4();
+          print("uuid : " + uuid);
+          NotificationService().showCallkitIncoming(uuid);
         },
         child: Text("Make call", style: TextStyle(color: Colors.black),)),
       ),

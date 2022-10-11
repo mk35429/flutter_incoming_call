@@ -24,6 +24,5 @@ void main() {
     MockFlutterIncomingCallPlatform fakePlatform = MockFlutterIncomingCallPlatform();
     FlutterIncomingCallPlatform.instance = fakePlatform;
 
-    expect(await flutterIncomingCallPlugin.getPlatformVersion(), '42');
   });
 }

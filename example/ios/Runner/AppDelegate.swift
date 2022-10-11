@@ -34,10 +34,11 @@ import flutter_incoming_call
         }
         let nameCaller = handleObj.getDecryptHandle()["nameCaller"] as? String ?? ""
         let handle = handleObj.getDecryptHandle()["handle"] as? String ?? ""
-        let data = flutter_callkit_incoming.Data(id: UUID().uuidString, nameCaller: nameCaller, handle: handle, type: isVideo ? 1 : 0)
+        let data = flutter_incoming_call.Data(id: UUID().uuidString, nameCaller: nameCaller, handle: handle, type: isVideo ? 1 : 0)
         //set more data...
-        data.nameCaller = "Johnny"
-        SwiftFlutterCallkitIncomingPlugin.sharedInstance?.startCall(data, fromPushKit: true)
+        data.extra = handleObj.getDecryptHandle()["extra"] as? NSDictionary ?? [:]
+        data.appName = handleObj.getDecryptHandle()["appName"] as? String ?? ""
+        SwiftFlutterIncomingCallPlugin.sharedInstance?.startCall(data, fromPushKit: true)
 
         return super.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
@@ -48,12 +49,12 @@ import flutter_incoming_call
         let deviceToken = credentials.token.map { String(format: "%02x", $0) }.joined()
         print(deviceToken)
         //Save deviceToken to your server
-        SwiftFlutterCallkitIncomingPlugin.sharedInstance?.setDevicePushTokenVoIP(deviceToken)
+        SwiftFlutterIncomingCallPlugin.sharedInstance?.setDevicePushTokenVoIP(deviceToken)
     }
 
     func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
         print("didInvalidatePushTokenFor")
-        SwiftFlutterCallkitIncomingPlugin.sharedInstance?.setDevicePushTokenVoIP("")
+        SwiftFlutterIncomingCallPlugin.sharedInstance?.setDevicePushTokenVoIP("")
     }
 
     // Handle incoming pushes
@@ -63,15 +64,17 @@ import flutter_incoming_call
 
         let id = payload.dictionaryPayload["id"] as? String ?? ""
         let nameCaller = payload.dictionaryPayload["nameCaller"] as? String ?? ""
-        let handle = payload.dictionaryPayload["handle"] as? String ?? ""
+        let handle = payload.dictionaryPayload["handleType"] as? String ?? ""
         let isVideo = payload.dictionaryPayload["isVideo"] as? Bool ?? false
 
-        let data = flutter_callkit_incoming.Data(id: id, nameCaller: nameCaller, handle: handle, type: isVideo ? 1 : 0)
+        let data = flutter_incoming_call.Data(id: id, nameCaller: nameCaller, handle: handle, type: isVideo ? 1 : 0)
         //set more data
-        data.extra = ["user": "abc@123", "platform": "ios"]
+        data.extra = payload.dictionaryPayload["extra"] as? NSDictionary ?? [:]
+        data.appName = payload.dictionaryPayload["appName"] as? String ?? ""
+        data.handleType = handle
         //data.iconName = ...
         //data.....
-        SwiftFlutterCallkitIncomingPlugin.sharedInstance?.showCallkitIncoming(data, fromPushKit: true)
+        SwiftFlutterIncomingCallPlugin.sharedInstance?.showCallkitIncoming(data, fromPushKit: true)
     }
 
 

@@ -21,7 +21,7 @@ static let ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP = "com.hiennv.flutter_callki
     static let ACTION_CALL_TOGGLE_GROUP = "com.hiennv.flutter_callkit_incoming.ACTION_CALL_TOGGLE_GROUP"
     static let ACTION_CALL_TOGGLE_AUDIO_SESSION = "com.hiennv.flutter_callkit_incoming.ACTION_CALL_TOGGLE_AUDIO_SESSION"
 
-    @objc public static var sharedInstance: SwiftFlutterCallkitIncomingPlugin? = nil
+    @objc public static var sharedInstance: SwiftFlutterIncomingCallPlugin? = nil
 
     private var channel: FlutterMethodChannel? = nil
     private var eventChannel: FlutterEventChannel? = nil
@@ -45,9 +45,9 @@ static let ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP = "com.hiennv.flutter_callki
         eventCallbackHandler?.send(event, body ?? [:] as [String : Any?])
     }
 
-    public static func sharePluginWithRegister(with registrar: FlutterPluginRegistrar) -> SwiftFlutterCallkitIncomingPlugin {
+    public static func sharePluginWithRegister(with registrar: FlutterPluginRegistrar) -> SwiftFlutterIncomingCallPlugin {
         if(sharedInstance == nil){
-            sharedInstance = SwiftFlutterCallkitIncomingPlugin()
+            sharedInstance = SwiftFlutterIncomingCallPlugin()
         }
         sharedInstance!.channel = FlutterMethodChannel(name: "flutter_callkit_incoming", binaryMessenger: registrar.messenger())
         sharedInstance!.eventChannel = FlutterEventChannel(name: "flutter_callkit_incoming_events", binaryMessenger: registrar.messenger())
@@ -122,7 +122,7 @@ static let ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP = "com.hiennv.flutter_callki
 
     @objc public func setDevicePushTokenVoIP(_ deviceToken: String) {
         UserDefaults.standard.set(deviceToken, forKey: devicePushTokenVoIP)
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP, ["deviceTokenVoIP":deviceToken])
+        self.sendEvent(SwiftFlutterIncomingCallPlugin.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP, ["deviceTokenVoIP":deviceToken])
     }
 
     @objc public func getDevicePushTokenVoIP() -> String {
@@ -158,7 +158,7 @@ static let ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP = "com.hiennv.flutter_callki
                 let call = Call(uuid: uuid!, data: data)
                 call.handle = data.handle
                 self.callManager?.addCall(call)
-                self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_INCOMING, data.toJSON())
+                self.sendEvent(SwiftFlutterIncomingCallPlugin.ACTION_CALL_INCOMING, data.toJSON())
                 self.endCallNotExist(data)
             }
         }
@@ -178,7 +178,7 @@ static let ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP = "com.hiennv.flutter_callki
         if(self.isFromPushKit){
             call = Call(uuid: UUID(uuidString: self.data!.uuid)!, data: data)
             self.isFromPushKit = false
-            self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_ENDED, data.toJSON())
+            self.sendEvent(SwiftFlutterIncomingCallPlugin.ACTION_CALL_ENDED, data.toJSON())
         }else {
             call = Call(uuid: UUID(uuidString: data.uuid)!, data: data)
         }
@@ -230,7 +230,7 @@ static let ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP = "com.hiennv.flutter_callki
 
     func callEndTimeout(_ data: Data) {
         self.saveEndCall(data.uuid, 3)
-        sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TIMEOUT, data.toJSON())
+        sendEvent(SwiftFlutterIncomingCallPlugin.ACTION_CALL_TIMEOUT, data.toJSON())
     }
 
     func getHandleType(_ handleType: String?) -> CXHandle.HandleType {
@@ -368,7 +368,7 @@ static let ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP = "com.hiennv.flutter_callki
         }
         self.outgoingCall = call;
         self.callManager?.addCall(call)
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_START, self.data?.toJSON())
+        self.sendEvent(SwiftFlutterIncomingCallPlugin.ACTION_CALL_START, self.data?.toJSON())
         action.fulfill()
     }
 
@@ -381,7 +381,7 @@ static let ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP = "com.hiennv.flutter_callki
             self.configurAudioSession()
         }
         self.answerCall = call
-        sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_ACCEPT, self.data?.toJSON())
+        sendEvent(SwiftFlutterIncomingCallPlugin.ACTION_CALL_ACCEPT, self.data?.toJSON())
         action.fulfill()
     }
 
@@ -394,12 +394,12 @@ static let ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP = "com.hiennv.flutter_callki
         call.endCall()
         self.callManager?.removeCall(call)
         if (self.answerCall == nil && self.outgoingCall == nil) {
-            sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_DECLINE, self.data?.toJSON())
+            sendEvent(SwiftFlutterIncomingCallPlugin.ACTION_CALL_DECLINE, self.data?.toJSON())
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 action.fulfill()
             }
         }else {
-            sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_ENDED, self.data?.toJSON())
+            sendEvent(SwiftFlutterIncomingCallPlugin.ACTION_CALL_ENDED, self.data?.toJSON())
             action.fulfill()
         }
     }
@@ -413,7 +413,7 @@ static let ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP = "com.hiennv.flutter_callki
         call.isOnHold = action.isOnHold
         call.isMuted = action.isOnHold
         self.callManager?.setHold(call: call, onHold: action.isOnHold)
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TOGGLE_HOLD, [ "id": action.callUUID.uuidString, "isOnHold": action.isOnHold ])
+        self.sendEvent(SwiftFlutterIncomingCallPlugin.ACTION_CALL_TOGGLE_HOLD, [ "id": action.callUUID.uuidString, "isOnHold": action.isOnHold ])
         action.fulfill()
     }
 
@@ -423,7 +423,7 @@ static let ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP = "com.hiennv.flutter_callki
             return
         }
         call.isMuted = action.isMuted
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TOGGLE_MUTE, [ "id": action.callUUID.uuidString, "isMuted": action.isMuted ])
+        self.sendEvent(SwiftFlutterIncomingCallPlugin.ACTION_CALL_TOGGLE_MUTE, [ "id": action.callUUID.uuidString, "isMuted": action.isMuted ])
         action.fulfill()
     }
 
@@ -432,7 +432,7 @@ static let ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP = "com.hiennv.flutter_callki
             action.fail()
             return
         }
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TOGGLE_GROUP, [ "id": action.callUUID.uuidString, "callUUIDToGroupWith" : action.callUUIDToGroupWith?.uuidString])
+        self.sendEvent(SwiftFlutterIncomingCallPlugin.ACTION_CALL_TOGGLE_GROUP, [ "id": action.callUUID.uuidString, "callUUIDToGroupWith" : action.callUUIDToGroupWith?.uuidString])
         action.fulfill()
     }
 
@@ -441,13 +441,13 @@ static let ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP = "com.hiennv.flutter_callki
             action.fail()
             return
         }
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TOGGLE_DMTF, [ "id": action.callUUID.uuidString, "digits": action.digits, "type": action.type ])
+        self.sendEvent(SwiftFlutterIncomingCallPlugin.ACTION_CALL_TOGGLE_DMTF, [ "id": action.callUUID.uuidString, "digits": action.digits, "type": action.type ])
         action.fulfill()
     }
 
 
     public func provider(_ provider: CXProvider, timedOutPerforming action: CXAction) {
-        sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TIMEOUT, self.data?.toJSON())
+        sendEvent(SwiftFlutterIncomingCallPlugin.ACTION_CALL_TIMEOUT, self.data?.toJSON())
     }
 
     public func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
@@ -472,7 +472,7 @@ static let ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP = "com.hiennv.flutter_callki
         }
         senddefaultAudioInterruptionNofificationToStartAudioResource()
         configurAudioSession()
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TOGGLE_AUDIO_SESSION, [ "isActivate": true ])
+        self.sendEvent(SwiftFlutterIncomingCallPlugin.ACTION_CALL_TOGGLE_AUDIO_SESSION, [ "isActivate": true ])
     }
 
     public func provider(_ provider: CXProvider, didDeactivate audioSession: AVAudioSession) {
@@ -489,7 +489,7 @@ static let ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP = "com.hiennv.flutter_callki
             self.answerCall = nil
         }
         self.callManager?.removeAllCalls()
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TOGGLE_AUDIO_SESSION, [ "isActivate": false ])
+        self.sendEvent(SwiftFlutterIncomingCallPlugin.ACTION_CALL_TOGGLE_AUDIO_SESSION, [ "isActivate": false ])
     }
 
 
